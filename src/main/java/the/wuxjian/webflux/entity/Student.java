@@ -4,12 +4,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.ReadOnlyProperty;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@Table("Student")
 public class Student {
     @Id
     private Long id;

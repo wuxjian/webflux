@@ -2,18 +2,31 @@ package the.wuxjian.webflux.controller;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import the.wuxjian.webflux.entity.Student;
+import the.wuxjian.webflux.helper.PageQueryBuilder;
 import the.wuxjian.webflux.respostiry.StudentRepository;
+
+import static org.springframework.data.relational.core.query.Criteria.where;
+import static org.springframework.data.relational.core.query.Query.query;
 
 @RestController
 @RequestMapping("/student")
 public class StudentController {
     @Autowired
     private StudentRepository repository;
+
+    @Autowired
+    private R2dbcEntityTemplate template;
+
+
 
     // list
     @GetMapping("/list")
@@ -43,6 +56,29 @@ public class StudentController {
     @GetMapping("/findByGender")
     public Flux<Student> selectByGender(String gender) {
         return repository.selectByGender(gender);
+    }
+
+    @GetMapping("/example")
+    public Flux<Student> customer() {
+        Student student = new Student();
+        student.setGender("M");
+        Example<Student> example = Example.of(student);
+        return repository.findAll();
+    }
+
+    @GetMapping("/template")
+    public Mono<Student> template() {
+       return template.selectOne(query(where("code").is("S0001")), Student.class);
+    }
+
+    @GetMapping("/page")
+    public Mono<Page<Student>> page() {
+        PageRequest pageable = PageRequest.of(1, 1);
+        return new PageQueryBuilder<>(template, Student.class)
+                .where(where("gender").is("M"))
+                .pageable(pageable)
+                .apply();
+
     }
 
     // 先查出来再修改
