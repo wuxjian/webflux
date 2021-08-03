@@ -3,9 +3,16 @@
 #    url: r2dbcs:mysql://localhost:3306/demo?sslMode=DISABLED
 #    username: root
 #    password: 123456
+server:
+  port: 8654
 logging:
   level:
     org:
       springframework:
         data:
           r2dbc: debug
+spring:
+  redis:
+    host: 47.117.42.24
+    port: 6379
+    password: Csih@1234
